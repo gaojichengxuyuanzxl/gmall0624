@@ -1,7 +1,8 @@
-package com.atguigu.gmall0624.manage.mapper;
+package com.atguigu.gmall0624.manage.service;
 
 import com.alibaba.dubbo.config.annotation.Service;
 import com.atguigu.gmall0624.bean.bean.*;
+import com.atguigu.gmall0624.manage.mapper.*;
 import com.atguigu.gmall0624.service.ManageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,17 @@ public class ManageServiceImpl implements ManageService {
     BaseCatalog2Mapper baseCatalog2Mapper;
     @Autowired
     BaseCatalog3Mapper baseCatalog3Mapper;
+    @Autowired
+    SpuInfoMapper spuInfoMapper;
+    @Autowired
+    BaseSaleAttrMapper baseSaleAttrMapper;
+    @Autowired
+    SpuImageMapper spuImageMapper;
+    @Autowired
+    SpuSaleAttrMapper spuSaleAttrMapper;
+    @Autowired
+    SpuSaleAttrValueMapper spuSaleAttrValueMapper;
+
     @Override
     public List<BaseCatalog1> getCatalog1() {
         List<BaseCatalog1> baseCatalog1List = baseCatalog1Mapper.selectAll();
@@ -57,9 +69,9 @@ public class ManageServiceImpl implements ManageService {
     @Transactional
     public void saveAttrInfo(BaseAttrInfo baseAttrInfo) {
         //修改！
-        if(baseAttrInfo.getId()!=null && baseAttrInfo.getId().length()>0){
+        if (baseAttrInfo.getId() != null && baseAttrInfo.getId().length() > 0) {
             baseAttrInfoMapper.updateByPrimaryKeySelective(baseAttrInfo);
-        }else {
+        } else {
             //baseAttrInfo代表页面传来的数据！
             //分别插入到两张表 baseAttrInfo,baseAttrValue
             //attrName,catalog3Id
@@ -70,11 +82,11 @@ public class ManageServiceImpl implements ManageService {
         baseAttrValueDel.setAttrId(baseAttrInfo.getId());
         baseAttrValueMapper.delete(baseAttrValueDel);
 
-        System.out.println("插入之后："+baseAttrInfo.getId());
+        System.out.println("插入之后：" + baseAttrInfo.getId());
         //baseAttrValue 接收baseAttValue 的集合
         List<BaseAttrValue> attrValueList = baseAttrInfo.getAttrValueList();
-        if(attrValueList!=null && attrValueList.size()>0){
-            for(BaseAttrValue baseAttrValue :attrValueList){
+        if (attrValueList != null && attrValueList.size() > 0) {
+            for (BaseAttrValue baseAttrValue : attrValueList) {
                 //保存数据 valueName,attrId = beseAttrInfo.getId()
                 baseAttrValue.setAttrId(baseAttrInfo.getId());
                 baseAttrValueMapper.insertSelective(baseAttrValue);
@@ -94,5 +106,69 @@ public class ManageServiceImpl implements ManageService {
         BaseAttrInfo baseAttrInfo = baseAttrInfoMapper.selectByPrimaryKey(attrId);
         baseAttrInfo.setAttrValueList(getAttrValueList(attrId));
         return baseAttrInfo;
+    }
+
+    @Override
+    public List<SpuInfo> getSpuInfoList(SpuInfo spuInfo) {
+        return spuInfoMapper.select(spuInfo);
+    }
+
+    @Override
+    public List<BaseSaleAttr> getBaseSaleAttrList() {
+        return baseSaleAttrMapper.selectAll();
+    }
+
+    @Override
+    public void saveSpuInfo(SpuInfo spuInfo) {
+        //什么情况是保存，什么情况是更新 spuinfo
+        if (spuInfo.getId() == null || spuInfo.getId().length() == 0) {
+            spuInfo.setId(null);
+            spuInfoMapper.insertSelective(spuInfo);
+        } else {
+            spuInfoMapper.updateByPrimaryKeySelective(spuInfo);
+        }
+        SpuImage spuImage = new SpuImage();
+        spuImage.setSpuId(spuInfo.getId());
+        spuImageMapper.delete(spuImage);
+        //保存数据，先获取数据
+        List<SpuImage> spuImageList = spuInfo.getSpuImageList();
+        if (spuImageList != null && spuImageList.size() > 0) {
+            //循环遍历
+            for (SpuImage image : spuImageList) {
+                image.setId(null);
+                image.setSpuId(spuInfo.getId());
+                spuImageMapper.insertSelective(image);
+            }
+        }
+        //销售属性删除插入
+        SpuSaleAttr spuSaleAttr = new SpuSaleAttr();
+        spuSaleAttr.setSpuId(spuInfo.getId());
+        spuSaleAttrMapper.delete(spuSaleAttr);
+        //销售属性值 删除，插入
+        SpuSaleAttrValue spuSaleAttrValue = new SpuSaleAttrValue();
+        spuSaleAttrValue.setSpuId(spuInfo.getId());
+        spuSaleAttrValueMapper.delete(spuSaleAttrValue);
+
+        //获取数据
+        List<SpuSaleAttr> spuSaleAttrList = spuInfo.getSpuSaleAttrList();
+        if (spuSaleAttrList != null && spuSaleAttrList.size() > 0) {
+            //循环遍历
+            for (SpuSaleAttr saleAttr : spuSaleAttrList) {
+                saleAttr.setId(null);
+                saleAttr.setSpuId(spuInfo.getId());
+                spuSaleAttrMapper.insertSelective(saleAttr);
+
+                // 添加销售属性值
+                List<SpuSaleAttrValue> spuSaleAttrValueList = saleAttr.getSpuSaleAttrValueList();
+                if (spuSaleAttrValueList != null && spuSaleAttrValueList.size() > 0) {
+                    // 循环遍历
+                    for (SpuSaleAttrValue saleAttrValue : spuSaleAttrValueList) {
+                        saleAttrValue.setId(null);
+                        saleAttrValue.setSpuId(spuInfo.getId());
+                        spuSaleAttrValueMapper.insertSelective(saleAttrValue);
+                    }
+                }
+            }
+        }
     }
 }

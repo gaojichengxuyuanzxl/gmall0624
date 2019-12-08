@@ -54,4 +54,5 @@ public class ManageController {
        // return manageService.getAttrValueList(attrId);
         return baseAttrInfo.getAttrValueList();
     }
+
 }
