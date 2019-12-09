@@ -2,6 +2,7 @@ package com.atguigu.gmall0624.bean.bean;
 
 import lombok.Data;
 
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;

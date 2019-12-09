@@ -8,7 +8,7 @@ public interface ManageService {
      List<BaseCatalog1> getCatalog1();
      List<BaseCatalog2> getCatalog2(String catalog1Id);
      List<BaseCatalog3> getCatalog3(String catalog2Id);
-     List<BaseAttrInfo> getAttrList(String catalog3Id);
+     List<BaseAttrInfo> getAttrInfoList(String catalog3Id);
 
     /**
      * 保存平台属性和平台属性值
@@ -31,4 +31,13 @@ public interface ManageService {
     List<BaseSaleAttr> getBaseSaleAttrList();
 
     public void saveSpuInfo(SpuInfo spuInfo);
+
+    /**
+     * 根据spuId 获取销售属性列表
+     * @param spuId
+     * @return
+     */
+    List<SpuSaleAttr> getSpuSaleAttrList(long  spuId);
+
+
 }

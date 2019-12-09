@@ -3,6 +3,8 @@ package com.atguigu.gmall0624.manage.controller;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.atguigu.gmall0624.bean.bean.BaseSaleAttr;
 import com.atguigu.gmall0624.bean.bean.SpuInfo;
+import com.atguigu.gmall0624.bean.bean.SpuSaleAttr;
+import com.atguigu.gmall0624.bean.bean.SpuSaleAttrValue;
 import com.atguigu.gmall0624.service.ManageService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -31,5 +33,10 @@ public class SpuManageController {
     @RequestMapping("saveSpuInfo")
     public void saveSpuInfo(@RequestBody SpuInfo spuInfo){
         manageService.saveSpuInfo(spuInfo);
+    }
+    //http://localhost:8082/spuSaleAttrList?spuId=58
+    @RequestMapping("spuSaleAttrList")
+    public List<SpuSaleAttr> getSpuSaleAttrList(long spuId){
+        return manageService.getSpuSaleAttrList(spuId);
     }
 }
