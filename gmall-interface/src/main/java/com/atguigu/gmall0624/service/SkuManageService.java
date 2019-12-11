@@ -1,9 +1,6 @@
 package com.atguigu.gmall0624.service;
 
-import com.atguigu.gmall0624.bean.bean.SkuInfo;
-import com.atguigu.gmall0624.bean.bean.SpuImage;
-import com.atguigu.gmall0624.bean.bean.SpuInfo;
-import com.atguigu.gmall0624.bean.bean.SpuSaleAttr;
+import com.atguigu.gmall0624.bean.bean.*;
 
 import java.util.List;
 
@@ -17,4 +14,10 @@ public interface SkuManageService {
      */
     List<SpuImage> getSpuImageList(String spuId);
     void saveSkuInfo(SkuInfo skuInfo);
+
+    SkuInfo getSkuInfo(String skuId);
+
+    List<SpuSaleAttr> getSpuSaleAttrListCheckBySku(SkuInfo skuInfo);
+
+    List<SkuSaleAttrValue> getSkuSaleAttrValueListBySpu(String spuId);
 }
