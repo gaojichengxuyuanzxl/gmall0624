@@ -4,9 +4,9 @@ import com.alibaba.dubbo.config.annotation.Service;
 import com.atguigu.gmall0624.bean.bean.*;
 import com.atguigu.gmall0624.manage.mapper.*;
 import com.atguigu.gmall0624.service.ManageService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import sun.font.FontRunIterator;
 
 import java.util.List;
 @Service
@@ -176,7 +176,12 @@ public class ManageServiceImpl implements ManageService {
         return spuSaleAttrMapper.selectSpuSaleAttrList(spuId);
     }
 
-
+    @Override
+    public List<BaseAttrInfo> getAttrList(List<String> attrValueIdList) {
+        String attrValueIds = StringUtils.join(attrValueIdList.toArray(), ",");
+        List<BaseAttrInfo> baseAttrInfoList=baseAttrInfoMapper.selectAttrInfoListByIds(attrValueIds);
+        return baseAttrInfoList;
+    }
 
 
 }

@@ -13,6 +13,7 @@
     <artifactId>gmall-web-util</artifactId>
 
     <dependencies>
+
         <dependency>
             <groupId>com.atguigu.gmall0624</groupId>
             <artifactId>gmall-common-util</artifactId>

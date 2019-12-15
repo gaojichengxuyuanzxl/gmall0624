@@ -10,9 +10,7 @@ import com.atguigu.gmall0624.service.SkuManageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import redis.clients.jedis.Jedis;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class SkuManageServiceImpl implements SkuManageService{
@@ -184,5 +182,28 @@ public class SkuManageServiceImpl implements SkuManageService{
     @Override
     public List<SkuSaleAttrValue> getSkuSaleAttrValueListBySpu(String spuId) {
         return skuSaleAttrValueMapper.selectSkuSaleAttrValueListBySpu(spuId);
+    }
+
+    @Override
+    public Map getSkuValueIdsMap(String spuId) {
+        HashMap<Object, Object> returnMap = new HashMap<>();
+
+        // 给returnMap 赋值 skuValueIdsMap.put("122|126","37") skuValueIdsMap.put("123|126","38")
+        /*
+            调用mapper 执行当前的sql 语句
+            SELECT group_concat(sale_attr_value_id ORDER BY sale_attr_id SEPARATOR '|') value_id,sku_id
+            FROM sku_sale_attr_value ssav INNER  JOIN sku_info si ON  ssav.sku_id = si.id
+            WHERE si.spu_id = 60
+            GROUP BY sku_id;
+         */
+        List<Map> mapList = skuSaleAttrValueMapper.getSaleAttrValuesBySpu(spuId);
+        if (mapList != null && mapList.size() > 0) {
+            for (Map map : mapList) {
+//                String value_id = (String) map.get("value_ids");//122|126
+//                String sku_id = (String) map.get("sku_id"); // 37
+                returnMap.put(map.get("value_ids"), map.get("sku_id"));
+            }
+        }
+        return returnMap;
     }
 }

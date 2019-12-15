@@ -40,5 +40,5 @@ public interface ManageService {
     List<SpuSaleAttr> getSpuSaleAttrList(long  spuId);
 
 
-
+    List<BaseAttrInfo> getAttrList(List<String> attrValueIdList);
 }
